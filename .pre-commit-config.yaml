@@ -87,7 +87,7 @@ repos:
         entry: pip-audit
         language: system
         pass_filenames: false
-        args: [--desc, --format=columns]
+        args: [-r, requirements.txt, --desc, --format=columns, --skip-editable]
 
       - id: snyk-security-scan
         name: Snyk vulnerability scan (with API limit handling)
