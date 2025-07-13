@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
@@ -66,7 +66,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
@@ -131,7 +131,7 @@ jobs:
         exit 0
 
     - name: Upload Snyk report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: snyk-report
         path: snyk-report.json
@@ -175,7 +175,7 @@ jobs:
 
     - name: Validate required documentation sections
       run: |
-        required_sections=("Overview" "Prerequisites" "Usage" "Azure Resources" "Security")
+        required_sections=("Overview" "Prerequisites" "Usage" "Resources Created" "Security Features")
         for section in "${required_sections[@]}"; do
           if ! grep -q "$section" README.md; then
             echo "Missing required section: $section"
@@ -244,7 +244,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
@@ -265,7 +265,7 @@ jobs:
         echo "Report saved to audit-report.json"
 
     - name: Upload audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pip-audit-report
         path: audit-report.json

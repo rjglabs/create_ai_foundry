@@ -5,3 +5,7 @@ pytest
 pre-commit
 flake8
 isort
+toml
+bandit
+types-toml
+pip-audit
