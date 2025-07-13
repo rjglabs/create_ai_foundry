@@ -1,0 +1,14 @@
+azure-identity
+azure-mgmt-applicationinsights
+azure-mgmt-authorization
+azure-mgmt-cognitiveservices
+azure-mgmt-containerregistry
+azure-mgmt-keyvault
+azure-mgmt-loganalytics
+azure-mgmt-resource
+azure-mgmt-storage
+python-dotenv
+azure-mgmt-appconfiguration
+azure-appconfiguration
+azure-keyvault-secrets
+cryptography>=44.0.1

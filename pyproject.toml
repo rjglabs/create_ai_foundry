@@ -1,0 +1,188 @@
+[tool.poetry]
+package-mode = false
+
+[project]
+name = "create_ai_foundry"
+version = "0.1.0"
+description = "Agentic Orchastratioin to help build Art Classrooms."
+authors = [
+    { name = "Rich Geiger", email = "geiger_richard@hotmail.com" }
+]
+requires-python = "^3.9.2"
+dependencies = [
+    "feedparser>=6.0.11",
+    "requests>=2.32.4",
+    "openpyxl>=3.1.5",
+    "python-dotenv",
+    "azure-core",
+    "azure-identity>=1.16.1",
+    "azure-keyvault-secrets",
+    "azure-search-documents",
+    "openai",
+    "pydantic>=2.11.7",
+    "zipp>=3.19.1",
+    "pyOpenSSL>=25.1.0",
+    "azure-mgmt-applicationinsights (>=4.1.0,<5.0.0)",
+    "azure-mgmt-authorization (>=4.0.0,<5.0.0)",
+    "azure-mgmt-cognitiveservices (>=13.6.0,<14.0.0)",
+    "azure-mgmt-containerregistry (>=14.0.0,<15.0.0)",
+    "azure-mgmt-keyvault (>=12.0.0,<13.0.0)",
+    "azure-mgmt-loganalytics (>=12.0.0,<13.0.0)",
+    "azure-mgmt-resource (>=24.0.0,<25.0.0)",
+    "azure-mgmt-storage (>=23.0.1,<24.0.0)",
+    "azure-mgmt-appconfiguration (>=5.0.0,<6.0.0)",
+    "azure-appconfiguration (>=1.7.1,<2.0.0)",
+    "cryptography>=44.0.1"
+]
+
+[tool.poetry.group.dev.dependencies]
+black = ">=24.3.0"
+flake8 = "*"
+isort = "*"
+mypy = "*"
+pylint = "*"
+pytest = "*"
+pre-commit = "*"
+pip-audit = "*"
+coverage = "*"
+
+[tool.mypy]
+# Production-ready mypy configuration
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+warn_no_return = true
+
+# Strict mode settings
+strict = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+show_error_codes = true
+show_error_context = true
+
+# Ignore missing imports for Azure SDK (some type stubs may be incomplete)
+ignore_missing_imports = true
+
+# Exclude test files from some strict checks
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = false
+warn_unused_ignores = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.coverage.run]
+# Coverage configuration for pytest-cov
+source = ["setup_ai_art_classroom"]
+branch = true
+omit = [
+    "tests/*",
+    "venv/*",
+    ".venv/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+    "setup.py",
+    "conftest.py"
+]
+
+[tool.coverage.report]
+# Coverage reporting configuration
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "# pragma: no cover",
+    "# type: ignore",
+    "if TYPE_CHECKING:",
+    "pass"
+]
+ignore_errors = true
+skip_covered = false
+skip_empty = false
+show_missing = true
+precision = 2
+fail_under = 55
+
+[tool.coverage.html]
+# HTML coverage report configuration
+directory = "htmlcov"
+title = "AI Art Classroom Coverage Report"
+
+[tool.coverage.xml]
+# XML coverage report configuration
+output = "coverage.xml"
+disallow_untyped_decorators = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+
+# Error reporting
+show_error_codes = true
+show_error_context = true
+show_column_numbers = true
+pretty = true
+
+# Import handling
+ignore_missing_imports = true
+follow_imports = "silent"
+no_implicit_optional = true
+
+# Disable specific error codes only when necessary
+# disable_error_code = ["union-attr"]  # Uncomment if needed for Azure SDK
+
+[tool.black]
+# Black code formatter configuration
+line-length = 79
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+# isort configuration for compatibility with black
+profile = "black"
+line_length = 79
+
+[tool.flake8]
+# Flake8 linting configuration
+max-line-length = 79
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "dist",
+    "build",
+    "*.egg-info",
+    ".venv",
+    ".env"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
