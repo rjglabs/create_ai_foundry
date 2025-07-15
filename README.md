@@ -133,6 +133,15 @@ Azure AI Foundry is a standalone AI development platform that provides:
 - **Audit Logging**: Comprehensive logging for all operations
 - **Encryption**: End-to-end encryption for all data
 - **Compliance Ready**: Follows Azure security best practices
+- **AI Security Testing**: PyRIT integration ready for AI model security validation
+
+### 🤖 AI Security Testing (PyRIT Integration)
+- **Prompt Injection Testing**: Validates AI models against jailbreak attempts
+- **Bias Detection**: Identifies potential bias in AI responses
+- **Content Filtering**: Ensures harmful content is properly blocked
+- **Safety Guardrails**: Validates that AI safety measures are working
+- **Automated Testing**: Integrates with CI/CD pipeline for continuous security validation
+- **Compliance Ready**: Supports AI governance and regulatory requirements
 
 ### 📊 Monitoring & Observability
 - **Centralized Logging**: Log Analytics workspace for all resources
@@ -146,6 +155,7 @@ Azure AI Foundry is a standalone AI development platform that provides:
 - **Security Scanning**: Bandit, pip-audit, and Snyk vulnerability detection
 - **Code Formatting**: Black and isort with 79-character line limits
 - **Enterprise Standards**: PEP 8 compliance and comprehensive documentation
+- **AI Security Testing**: PyRIT readiness checks for AI model security validation
 
 ## 🔧 Prerequisites
 

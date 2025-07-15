@@ -1,3 +1,4 @@
+# Code Quality and Testing
 mypy
 pylint
 black
@@ -6,6 +7,9 @@ pre-commit
 flake8
 isort
 toml
+
+# Security and AI Testing
 bandit
 types-toml
 pip-audit
+# pyrit  # Uncomment when ready for AI security testing

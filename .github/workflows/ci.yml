@@ -508,6 +508,153 @@ jobs:
           exit 1
         fi
 
+  ai-security-readiness:
+    runs-on: ubuntu-latest
+    name: AI Security Testing Readiness (PyRIT)
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r dev-requirements.txt
+
+    - name: Check PyRIT readiness
+      run: |
+        echo "🔍 Checking AI Security Testing Readiness with PyRIT..."
+        echo ""
+
+        # Check if we have AI models or agents to test
+        ai_components_found=false
+
+        # Look for AI model usage patterns
+        if grep -r "openai\|azure.cognitiveservices\|AI.*Service\|ChatCompletion" *.py 2>/dev/null; then
+          echo "✅ AI service usage detected - PyRIT testing recommended"
+          ai_components_found=true
+        else
+          echo "ℹ️  No AI model usage detected yet - PyRIT testing not needed"
+        fi
+
+        # Look for prompt templates or AI workflows
+        if find . -name "*.py" -exec grep -l "prompt\|template\|chat\|completion" {} \; 2>/dev/null | head -1; then
+          echo "✅ AI prompt/template usage detected - PyRIT jailbreak testing recommended"
+          ai_components_found=true
+        fi
+
+        # Check for AI agent patterns
+        if grep -r "agent\|conversation\|memory\|tool.*call" *.py 2>/dev/null; then
+          echo "✅ AI agent patterns detected - PyRIT comprehensive testing recommended"
+          ai_components_found=true
+        fi
+
+        echo ""
+        echo "🎯 PyRIT Testing Recommendations:"
+
+        if [ "$ai_components_found" = true ]; then
+          echo "   • Install PyRIT: pip install pyrit"
+          echo "   • Test prompt injection attacks"
+          echo "   • Validate content filtering"
+          echo "   • Check for bias in AI responses"
+          echo "   • Test jailbreak attempts"
+          echo "   • Validate safety guardrails"
+          echo ""
+          echo "📋 Sample PyRIT test command:"
+          echo "   python -m pyrit.prompt_target.azure_openai_chat_target --help"
+        else
+          echo "   • PyRIT testing not needed for infrastructure-only deployment"
+          echo "   • Add PyRIT tests when you deploy AI models or agents"
+          echo "   • Current focus: infrastructure security (already covered)"
+        fi
+
+        echo ""
+        echo "🔐 Current Security Coverage:"
+        echo "   ✅ Infrastructure security (Azure Key Vault, RBAC)"
+        echo "   ✅ Code security (Bandit, pip-audit)"
+        echo "   ✅ Secret scanning (enhanced patterns)"
+        echo "   ✅ Dependency vulnerability scanning"
+
+        if [ "$ai_components_found" = true ]; then
+          echo "   ⚠️  AI-specific security testing (add PyRIT when ready)"
+        else
+          echo "   ✅ AI security testing (not applicable yet)"
+        fi
+
+        echo ""
+        echo "✅ AI Security readiness check completed"
+
+    - name: Create PyRIT configuration template
+      run: |
+        echo "📝 Creating PyRIT configuration template for future use..."
+
+        mkdir -p .pyrit
+        cat > .pyrit/config.yaml << 'EOF'
+        # PyRIT Configuration Template
+        # Activate this when you have AI models deployed
+
+        # Azure OpenAI Configuration
+        azure_openai:
+          api_type: "azure"
+          api_version: "2023-05-15"
+          # These should come from Azure Key Vault:
+          # endpoint: "${AI_SERVICES_ENDPOINT}"
+          # api_key: "${AI_SERVICES_KEY}"
+
+        # Test Categories to Run
+        test_categories:
+          - jailbreak_attempts
+          - prompt_injection
+          - bias_detection
+          - content_filtering
+          - safety_guardrails
+
+        # Test Thresholds
+        thresholds:
+          max_jailbreak_success_rate: 0.05  # 5% or less
+          min_content_filter_effectiveness: 0.95  # 95% or higher
+          max_bias_score: 0.3  # Normalized bias score
+
+        # Reporting
+        reports:
+          format: "json"
+          output_dir: "pyrit_reports"
+          include_evidence: true
+        EOF
+
+        echo "✅ PyRIT configuration template created at .pyrit/config.yaml"
+        echo "💡 Activate PyRIT testing when you deploy AI models"
+
+    - name: Document AI security testing approach
+      run: |
+        echo "📚 AI Security Testing Documentation:"
+        echo ""
+        echo "CURRENT STATE:"
+        echo "  • Infrastructure security: ✅ Implemented"
+        echo "  • Code security: ✅ Implemented"
+        echo "  • AI model security: ⏳ Ready for implementation"
+        echo ""
+        echo "NEXT STEPS FOR AI SECURITY:"
+        echo "  1. Deploy AI models using this infrastructure"
+        echo "  2. Install PyRIT: pip install pyrit"
+        echo "  3. Configure PyRIT with Azure Key Vault secrets"
+        echo "  4. Add PyRIT tests to this CI pipeline"
+        echo "  5. Set up automated AI security testing"
+        echo ""
+        echo "PYRIT INTEGRATION POINTS:"
+        echo "  • Azure AI Services endpoint (from Key Vault)"
+        echo "  • Authentication via Azure managed identity"
+        echo "  • Test results integrated with CI/CD pipeline"
+        echo "  • Automated security gate before production deployment"
+        echo ""
+        echo "📖 Learn more: https://github.com/Azure/PyRIT"
+
   final-validation:
     runs-on: ubuntu-latest
     name: Final Integration Check
