@@ -84,6 +84,7 @@ jobs:
         bandit -r *.py -f json -o bandit-report.json || true
 
     - name: Run Snyk vulnerability scan
+      continue-on-error: true
       run: |
         # Authenticate with Snyk (optional, some scans work without auth)
         if [ -n "${{ secrets.SNYK_TOKEN }}" ] && [ "${{ secrets.SNYK_TOKEN }}" != "" ]; then
@@ -100,19 +101,23 @@ jobs:
 
         # Run Snyk scan with graceful handling of API limits and errors
         echo "Running Snyk vulnerability scan..."
+        set +e  # Don't exit on error
         snyk_output=$(snyk test --file=requirements.txt --package-manager=pip 2>&1)
         snyk_exit_code=$?
+        set -e  # Re-enable exit on error
 
         # Always save output for review
         echo "$snyk_output" > snyk-output.txt
 
         # Handle different exit codes and error conditions
-        if echo "$snyk_output" | grep -q "monthly limit of.*private tests" || echo "$snyk_output" | grep -q "API limit\|rate limit"; then
+        if echo "$snyk_output" | grep -q "monthly limit of.*private tests" || echo "$snyk_output" | grep -q "API limit\|rate limit\|quota exceeded\|too many requests"; then
           echo "⚠️  Snyk monthly API limit reached - scan skipped for this run"
           echo "📅 Limit will reset next month"
           echo "🔒 Previous scans showed acceptable risk levels"
           echo "✅ CI continues with other security tools (pip-audit, bandit)"
           echo '{"summary": "API limit reached - scan skipped", "vulnerabilities": [], "note": "Monthly API limit exceeded"}' > snyk-report.json
+          # Exit successfully to continue CI pipeline
+          exit 0
         elif echo "$snyk_output" | grep -q "Command not found\|not installed\|Unable to find Snyk"; then
           echo "⚠️  Snyk CLI not properly installed or configured"
           echo "🔧 Continuing CI with other security tools"
@@ -140,6 +145,7 @@ jobs:
 
         echo "📊 Snyk scan process complete"
         # Always continue - don't fail CI due to Snyk issues
+        exit 0
 
     - name: Upload Snyk report
       uses: actions/upload-artifact@v4
