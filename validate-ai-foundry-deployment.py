@@ -362,7 +362,16 @@ def validate_key_vault(
         )
 
         # Check for expected secrets
-        expected_secrets = ["ai-services-key", "ai-services-endpoint"]
+        expected_secrets = [
+            "ai-services-key",
+            "ai-services-endpoint",
+            "cognitive-search-admin-key",
+            "cognitive-search-query-key",
+            "cognitive-search-endpoint",
+            "speechtotext-endpoint",
+            "texttospeech-endpoint",
+            "translator-endpoint",
+        ]
         found_secrets = []
         missing_secrets = []
 

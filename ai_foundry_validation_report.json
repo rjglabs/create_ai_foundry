@@ -1,22 +1,22 @@
 {
   "validation_info": {
-    "timestamp": "2025-07-13T12:34:01.139141",
+    "timestamp": "2025-07-18T22:40:25.310046",
     "script_version": "1.0.0",
     "environment": {
       "LOCATION": "eastus2",
-      "RESOURCE_GROUP": "rg-ai-art-classroom-test03",
-      "KEYVAULT_NAME": "kvaiartsclassroomtest03",
-      "AI_SERVICES_NAME": "aiserv-ai-art-classroom-test03",
-      "CONTAINER_REGISTRY_NAME": "craiartsclassroomtest03",
-      "STORAGE_ACCOUNT_NAME": "staiartsclassroomtest03",
-      "APPLICATION_INSIGHTS_NAME": "ai-ai-art-classroom-test03",
-      "LOG_WORKSPACE_NAME": "log-ai-art-classroom-test03"
+      "RESOURCE_GROUP": "rg-ai-art-classroom-test04",
+      "KEYVAULT_NAME": "kvaiartsclassroomtest04",
+      "AI_SERVICES_NAME": "aiserv-ai-art-classroom-test04",
+      "CONTAINER_REGISTRY_NAME": "craiartsclassroomtest04",
+      "STORAGE_ACCOUNT_NAME": "staiartsclassroomtest04",
+      "APPLICATION_INSIGHTS_NAME": "ai-ai-art-classroom-test04",
+      "LOG_WORKSPACE_NAME": "log-ai-art-classroom-test04"
     },
     "azure_info": {
       "subscription_id": "a9b5cf2d-089a-4a81-8b0e-57042496063e",
       "tenant_id": "9513c92a-cc16-47fb-b2b8-e5dbea00f730",
       "user": "rgeiger@rjglabs.com",
-      "subscription_name": "Azure subscription 1"
+      "subscription_name": "RJGLABS_Subscription"
     }
   },
   "summary": {
@@ -32,7 +32,7 @@
       "name": "Required Variables",
       "status": "PASS",
       "message": "All required environment variables are present",
-      "timestamp": "2025-07-13T12:33:43.384949",
+      "timestamp": "2025-07-18T22:40:09.773743",
       "details": {
         "variables": [
           "LOCATION",
@@ -51,7 +51,7 @@
       "name": "Installation",
       "status": "PASS",
       "message": "Azure CLI is installed and accessible",
-      "timestamp": "2025-07-13T12:33:44.598468",
+      "timestamp": "2025-07-18T22:40:10.828391",
       "details": {}
     },
     {
@@ -59,26 +59,26 @@
       "name": "Authentication",
       "status": "PASS",
       "message": "Authenticated as rgeiger@rjglabs.com",
-      "timestamp": "2025-07-13T12:33:45.681492",
+      "timestamp": "2025-07-18T22:40:11.645424",
       "details": {
         "subscription_id": "a9b5cf2d-089a-4a81-8b0e-57042496063e",
         "tenant_id": "9513c92a-cc16-47fb-b2b8-e5dbea00f730",
         "user": "rgeiger@rjglabs.com",
-        "subscription_name": "Azure subscription 1"
+        "subscription_name": "RJGLABS_Subscription"
       }
     },
     {
       "category": "Resource Group",
       "name": "Existence",
       "status": "PASS",
-      "message": "Resource group 'rg-ai-art-classroom-test03' exists in eastus2",
-      "timestamp": "2025-07-13T12:33:48.231671",
+      "message": "Resource group 'rg-ai-art-classroom-test04' exists in eastus2",
+      "timestamp": "2025-07-18T22:40:14.131544",
       "details": {
-        "name": "rg-ai-art-classroom-test03",
+        "name": "rg-ai-art-classroom-test04",
         "location": "eastus2",
         "tags": {
           "Environment": "AI-Development",
-          "Project": "aiserv-ai-art-classroom-test03",
+          "Project": "aiserv-ai-art-classroom-test04",
           "Purpose": "AI-Foundry",
           "CreatedBy": "create-ai-foundry-project.py"
         },
@@ -89,12 +89,12 @@
       "category": "Key Vault",
       "name": "Existence",
       "status": "PASS",
-      "message": "Key Vault 'kvaiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:49.597336",
+      "message": "Key Vault 'kvaiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:15.353353",
       "details": {
-        "name": "kvaiartsclassroomtest03",
+        "name": "kvaiartsclassroomtest04",
         "location": "eastus2",
-        "vault_uri": "https://kvaiartsclassroomtest03.vault.azure.net/",
+        "vault_uri": "https://kvaiartsclassroomtest04.vault.azure.net/",
         "sku": "standard"
       }
     },
@@ -103,7 +103,7 @@
       "name": "Secret Access",
       "status": "PASS",
       "message": "Accessible secrets: ai-services-key, ai-services-endpoint",
-      "timestamp": "2025-07-13T12:33:51.020319",
+      "timestamp": "2025-07-18T22:40:17.107364",
       "details": {
         "found_secrets": [
           "ai-services-key",
@@ -116,12 +116,12 @@
       "category": "AI Services",
       "name": "Existence",
       "status": "PASS",
-      "message": "AI Services account 'aiserv-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:52.488478",
+      "message": "AI Services account 'aiserv-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:18.301872",
       "details": {
-        "name": "aiserv-ai-art-classroom-test03",
+        "name": "aiserv-ai-art-classroom-test04",
         "location": "eastus2",
-        "endpoint": "https://aiserv-ai-art-classroom-test03.cognitiveservices.azure.com/",
+        "endpoint": "https://aiserv-ai-art-classroom-test04.cognitiveservices.azure.com/",
         "kind": "AIServices",
         "sku": "S0",
         "provisioning_state": "Succeeded"
@@ -132,19 +132,19 @@
       "name": "API Key Access",
       "status": "PASS",
       "message": "AI Services API keys are accessible",
-      "timestamp": "2025-07-13T12:33:52.917700",
+      "timestamp": "2025-07-18T22:40:18.581816",
       "details": {}
     },
     {
       "category": "Container Registry",
       "name": "Existence",
       "status": "PASS",
-      "message": "Container Registry 'craiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:54.619152",
+      "message": "Container Registry 'craiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:19.851903",
       "details": {
-        "name": "craiartsclassroomtest03",
+        "name": "craiartsclassroomtest04",
         "location": "eastus2",
-        "login_server": "craiartsclassroomtest03.azurecr.io",
+        "login_server": "craiartsclassroomtest04.azurecr.io",
         "sku": "Basic",
         "admin_user_enabled": true,
         "provisioning_state": "Succeeded"
@@ -155,17 +155,17 @@
       "name": "Admin Credentials",
       "status": "PASS",
       "message": "Admin credentials are accessible",
-      "timestamp": "2025-07-13T12:33:55.086170",
+      "timestamp": "2025-07-18T22:40:20.210248",
       "details": {}
     },
     {
       "category": "Storage Account",
       "name": "Existence",
       "status": "PASS",
-      "message": "Storage Account 'staiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:56.481764",
+      "message": "Storage Account 'staiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:21.337682",
       "details": {
-        "name": "staiartsclassroomtest03",
+        "name": "staiartsclassroomtest04",
         "location": "eastus2",
         "kind": "StorageV2",
         "sku": "Standard_LRS",
@@ -179,17 +179,17 @@
       "name": "Access Keys",
       "status": "PASS",
       "message": "Storage Account access keys are available",
-      "timestamp": "2025-07-13T12:33:57.009282",
+      "timestamp": "2025-07-18T22:40:21.578490",
       "details": {}
     },
     {
       "category": "Log Analytics",
       "name": "Existence",
       "status": "PASS",
-      "message": "Log Analytics Workspace 'log-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:58.458997",
+      "message": "Log Analytics Workspace 'log-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:22.817821",
       "details": {
-        "name": "log-ai-art-classroom-test03",
+        "name": "log-ai-art-classroom-test04",
         "location": "eastus2",
         "sku": "PerGB2018",
         "retention_days": 30,
@@ -200,14 +200,14 @@
       "category": "Application Insights",
       "name": "Existence",
       "status": "PASS",
-      "message": "Application Insights 'ai-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:59.850074",
+      "message": "Application Insights 'ai-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:24.066908",
       "details": {
-        "name": "ai-ai-art-classroom-test03",
+        "name": "ai-ai-art-classroom-test04",
         "location": "eastus2",
         "kind": "web",
         "application_type": "web",
-        "instrumentation_key": "d1a86a4d...",
+        "instrumentation_key": "2002ff6b...",
         "provisioning_state": "Succeeded"
       }
     },
@@ -216,7 +216,7 @@
       "name": "AI Developer Role",
       "status": "PASS",
       "message": "AI Developer role is assigned to current user",
-      "timestamp": "2025-07-13T12:34:01.134009",
+      "timestamp": "2025-07-18T22:40:25.305330",
       "details": {}
     },
     {
@@ -224,7 +224,7 @@
       "name": "Role Assignments",
       "status": "PASS",
       "message": "Found 6 role assignments for current user",
-      "timestamp": "2025-07-13T12:34:01.134273",
+      "timestamp": "2025-07-18T22:40:25.305656",
       "details": {
         "assignment_count": 6
       }
@@ -238,7 +238,7 @@
       "name": "Required Variables",
       "status": "PASS",
       "message": "All required environment variables are present",
-      "timestamp": "2025-07-13T12:33:43.384949",
+      "timestamp": "2025-07-18T22:40:09.773743",
       "details": {
         "variables": [
           "LOCATION",
@@ -257,7 +257,7 @@
       "name": "Installation",
       "status": "PASS",
       "message": "Azure CLI is installed and accessible",
-      "timestamp": "2025-07-13T12:33:44.598468",
+      "timestamp": "2025-07-18T22:40:10.828391",
       "details": {}
     },
     {
@@ -265,26 +265,26 @@
       "name": "Authentication",
       "status": "PASS",
       "message": "Authenticated as rgeiger@rjglabs.com",
-      "timestamp": "2025-07-13T12:33:45.681492",
+      "timestamp": "2025-07-18T22:40:11.645424",
       "details": {
         "subscription_id": "a9b5cf2d-089a-4a81-8b0e-57042496063e",
         "tenant_id": "9513c92a-cc16-47fb-b2b8-e5dbea00f730",
         "user": "rgeiger@rjglabs.com",
-        "subscription_name": "Azure subscription 1"
+        "subscription_name": "RJGLABS_Subscription"
       }
     },
     {
       "category": "Resource Group",
       "name": "Existence",
       "status": "PASS",
-      "message": "Resource group 'rg-ai-art-classroom-test03' exists in eastus2",
-      "timestamp": "2025-07-13T12:33:48.231671",
+      "message": "Resource group 'rg-ai-art-classroom-test04' exists in eastus2",
+      "timestamp": "2025-07-18T22:40:14.131544",
       "details": {
-        "name": "rg-ai-art-classroom-test03",
+        "name": "rg-ai-art-classroom-test04",
         "location": "eastus2",
         "tags": {
           "Environment": "AI-Development",
-          "Project": "aiserv-ai-art-classroom-test03",
+          "Project": "aiserv-ai-art-classroom-test04",
           "Purpose": "AI-Foundry",
           "CreatedBy": "create-ai-foundry-project.py"
         },
@@ -295,12 +295,12 @@
       "category": "Key Vault",
       "name": "Existence",
       "status": "PASS",
-      "message": "Key Vault 'kvaiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:49.597336",
+      "message": "Key Vault 'kvaiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:15.353353",
       "details": {
-        "name": "kvaiartsclassroomtest03",
+        "name": "kvaiartsclassroomtest04",
         "location": "eastus2",
-        "vault_uri": "https://kvaiartsclassroomtest03.vault.azure.net/",
+        "vault_uri": "https://kvaiartsclassroomtest04.vault.azure.net/",
         "sku": "standard"
       }
     },
@@ -309,7 +309,7 @@
       "name": "Secret Access",
       "status": "PASS",
       "message": "Accessible secrets: ai-services-key, ai-services-endpoint",
-      "timestamp": "2025-07-13T12:33:51.020319",
+      "timestamp": "2025-07-18T22:40:17.107364",
       "details": {
         "found_secrets": [
           "ai-services-key",
@@ -322,12 +322,12 @@
       "category": "AI Services",
       "name": "Existence",
       "status": "PASS",
-      "message": "AI Services account 'aiserv-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:52.488478",
+      "message": "AI Services account 'aiserv-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:18.301872",
       "details": {
-        "name": "aiserv-ai-art-classroom-test03",
+        "name": "aiserv-ai-art-classroom-test04",
         "location": "eastus2",
-        "endpoint": "https://aiserv-ai-art-classroom-test03.cognitiveservices.azure.com/",
+        "endpoint": "https://aiserv-ai-art-classroom-test04.cognitiveservices.azure.com/",
         "kind": "AIServices",
         "sku": "S0",
         "provisioning_state": "Succeeded"
@@ -338,19 +338,19 @@
       "name": "API Key Access",
       "status": "PASS",
       "message": "AI Services API keys are accessible",
-      "timestamp": "2025-07-13T12:33:52.917700",
+      "timestamp": "2025-07-18T22:40:18.581816",
       "details": {}
     },
     {
       "category": "Container Registry",
       "name": "Existence",
       "status": "PASS",
-      "message": "Container Registry 'craiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:54.619152",
+      "message": "Container Registry 'craiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:19.851903",
       "details": {
-        "name": "craiartsclassroomtest03",
+        "name": "craiartsclassroomtest04",
         "location": "eastus2",
-        "login_server": "craiartsclassroomtest03.azurecr.io",
+        "login_server": "craiartsclassroomtest04.azurecr.io",
         "sku": "Basic",
         "admin_user_enabled": true,
         "provisioning_state": "Succeeded"
@@ -361,17 +361,17 @@
       "name": "Admin Credentials",
       "status": "PASS",
       "message": "Admin credentials are accessible",
-      "timestamp": "2025-07-13T12:33:55.086170",
+      "timestamp": "2025-07-18T22:40:20.210248",
       "details": {}
     },
     {
       "category": "Storage Account",
       "name": "Existence",
       "status": "PASS",
-      "message": "Storage Account 'staiartsclassroomtest03' exists",
-      "timestamp": "2025-07-13T12:33:56.481764",
+      "message": "Storage Account 'staiartsclassroomtest04' exists",
+      "timestamp": "2025-07-18T22:40:21.337682",
       "details": {
-        "name": "staiartsclassroomtest03",
+        "name": "staiartsclassroomtest04",
         "location": "eastus2",
         "kind": "StorageV2",
         "sku": "Standard_LRS",
@@ -385,17 +385,17 @@
       "name": "Access Keys",
       "status": "PASS",
       "message": "Storage Account access keys are available",
-      "timestamp": "2025-07-13T12:33:57.009282",
+      "timestamp": "2025-07-18T22:40:21.578490",
       "details": {}
     },
     {
       "category": "Log Analytics",
       "name": "Existence",
       "status": "PASS",
-      "message": "Log Analytics Workspace 'log-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:58.458997",
+      "message": "Log Analytics Workspace 'log-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:22.817821",
       "details": {
-        "name": "log-ai-art-classroom-test03",
+        "name": "log-ai-art-classroom-test04",
         "location": "eastus2",
         "sku": "PerGB2018",
         "retention_days": 30,
@@ -406,14 +406,14 @@
       "category": "Application Insights",
       "name": "Existence",
       "status": "PASS",
-      "message": "Application Insights 'ai-ai-art-classroom-test03' exists",
-      "timestamp": "2025-07-13T12:33:59.850074",
+      "message": "Application Insights 'ai-ai-art-classroom-test04' exists",
+      "timestamp": "2025-07-18T22:40:24.066908",
       "details": {
-        "name": "ai-ai-art-classroom-test03",
+        "name": "ai-ai-art-classroom-test04",
         "location": "eastus2",
         "kind": "web",
         "application_type": "web",
-        "instrumentation_key": "d1a86a4d...",
+        "instrumentation_key": "2002ff6b...",
         "provisioning_state": "Succeeded"
       }
     },
@@ -422,7 +422,7 @@
       "name": "AI Developer Role",
       "status": "PASS",
       "message": "AI Developer role is assigned to current user",
-      "timestamp": "2025-07-13T12:34:01.134009",
+      "timestamp": "2025-07-18T22:40:25.305330",
       "details": {}
     },
     {
@@ -430,7 +430,7 @@
       "name": "Role Assignments",
       "status": "PASS",
       "message": "Found 6 role assignments for current user",
-      "timestamp": "2025-07-13T12:34:01.134273",
+      "timestamp": "2025-07-18T22:40:25.305656",
       "details": {
         "assignment_count": 6
       }

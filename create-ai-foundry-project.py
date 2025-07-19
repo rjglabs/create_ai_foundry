@@ -693,6 +693,30 @@ def get_search_service_endpoint_and_key(
         raise
 
 
+def get_search_service_query_keys(
+    search_client: SearchManagementClient,
+    rg_name: str,
+    search_name: str,
+) -> list[str]:
+    """Get Cognitive Search service query keys."""
+    try:
+        # Get the query keys
+        query_keys = search_client.query_keys.list_by_search_service(
+            rg_name, search_name
+        )
+
+        # Extract the key values
+        keys = []
+        for query_key in query_keys:
+            if query_key.key:
+                keys.append(query_key.key)
+
+        return keys
+    except Exception as e:
+        logger.error(f"Failed to get Search service query keys: {e}")
+        raise
+
+
 def store_secret_in_keyvault(
     keyvault_name: str,
     secret_name: str,
@@ -1345,7 +1369,10 @@ resource details
 
             # Store the API key in Key Vault
             store_secret_in_keyvault(
-                keyvault_name, "cognitive-search-key", search_key, credential
+                keyvault_name,
+                "cognitive-search-admin-key",
+                search_key,
+                credential,
             )
 
             # Store the endpoint in Key Vault
@@ -1356,6 +1383,39 @@ resource details
                 credential,
             )
 
+            # Get and store query keys as well
+            try:
+                query_keys = get_search_service_query_keys(
+                    search_client, resource_group, cognitive_search_name
+                )
+
+                # Store the first query key (most commonly used)
+                if query_keys:
+                    store_secret_in_keyvault(
+                        keyvault_name,
+                        "cognitive-search-query-key",
+                        query_keys[0],
+                        credential,
+                    )
+
+                    # Store all query keys as JSON array if multiple exist
+                    if len(query_keys) > 1:
+                        import json
+
+                        store_secret_in_keyvault(
+                            keyvault_name,
+                            "cognitive-search-query-keys-all",
+                            json.dumps(query_keys),
+                            credential,
+                        )
+
+                logger.info(
+                    "  [✓] Cognitive Search query keys stored successfully"
+                )
+
+            except Exception as qe:
+                logger.warning(f"  [⚠] Failed to store query keys: {qe}")
+
             logger.info(
                 "  [✓] Cognitive Search credentials stored successfully"
             )
@@ -1365,6 +1425,49 @@ resource details
                 f"  [⚠] Failed to store Cognitive Search credentials: {e}"
             )
             logger.warning("  [⚠] You may need to configure these manually")
+
+        # Store additional Speech and Translation service endpoints
+        logger.info("  [🔑] Storing additional service endpoints...")
+        try:
+            # Speech to Text endpoint
+            speech_to_text_endpoint = (
+                f"https://{location}.stt.speech.microsoft.com"
+            )
+            store_secret_in_keyvault(
+                keyvault_name,
+                "speechtotext-endpoint",
+                speech_to_text_endpoint,
+                credential,
+            )
+
+            # Text to Speech endpoint
+            text_to_speech_endpoint = (
+                f"https://{location}.tts.speech.microsoft.com"
+            )
+            store_secret_in_keyvault(
+                keyvault_name,
+                "texttospeech-endpoint",
+                text_to_speech_endpoint,
+                credential,
+            )
+
+            # Text Translation endpoint
+            translator_endpoint = (
+                "https://api.cognitive.microsofttranslator.com/"
+            )
+            store_secret_in_keyvault(
+                keyvault_name,
+                "translator-endpoint",
+                translator_endpoint,
+                credential,
+            )
+
+            logger.info(
+                "  [✓] Additional service endpoints stored successfully"
+            )
+
+        except Exception as e:
+            logger.warning(f"  [⚠] Failed to store additional endpoints: {e}")
 
         # =================================================================
         # PHASE 10: ROLE ASSIGNMENTS
@@ -1511,11 +1614,25 @@ resource details
             "   • AI Services Endpoint → Key Vault: ai-services-endpoint"
         )
         logger.info(
-            "   • Cognitive Search API Key → Key Vault: cognitive-search-key"
+            "   • Cognitive Search Admin Key → Key Vault: "
+            "cognitive-search-admin-key"
+        )
+        logger.info(
+            "   • Cognitive Search Query Key → Key Vault: "
+            "cognitive-search-query-key"
         )
         logger.info(
             "   • Cognitive Search Endpoint → Key Vault: "
             "cognitive-search-endpoint"
+        )
+        logger.info(
+            "   • Speech to Text Endpoint → Key Vault: speechtotext-endpoint"
+        )
+        logger.info(
+            "   • Text to Speech Endpoint → Key Vault: texttospeech-endpoint"
+        )
+        logger.info(
+            "   • Text Translation Endpoint → Key Vault: translator-endpoint"
         )
         logger.info("")
         logger.info("📁 FILES CREATED:")
@@ -1573,3 +1690,7 @@ resource details
 # =============================================================================
 # AZURE RESOURCE UTILITIES
 # =============================================================================
+
+
+if __name__ == "__main__":
+    main()

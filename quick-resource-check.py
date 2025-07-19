@@ -141,8 +141,12 @@ def check_key_vault_secrets(
     expected_secrets = [
         "ai-services-key",
         "ai-services-endpoint",
-        "cognitive-search-key",
+        "cognitive-search-admin-key",
+        "cognitive-search-query-key",
         "cognitive-search-endpoint",
+        "speechtotext-endpoint",
+        "texttospeech-endpoint",
+        "translator-endpoint",
     ]
 
     try:

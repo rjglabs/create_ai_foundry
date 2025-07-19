@@ -209,8 +209,12 @@ def validate_expected_secrets(
     expected_secrets = {
         "ai-services-key": "AI Services API Key",
         "ai-services-endpoint": "AI Services Endpoint URL",
-        "cognitive-search-key": "Cognitive Search API Key",
+        "cognitive-search-admin-key": "Cognitive Search Admin API Key",
+        "cognitive-search-query-key": "Cognitive Search Query API Key",
         "cognitive-search-endpoint": "Cognitive Search Endpoint URL",
+        "speechtotext-endpoint": "Speech to Text Service Endpoint",
+        "texttospeech-endpoint": "Text to Speech Service Endpoint",
+        "translator-endpoint": "Text Translation Service Endpoint",
     }
 
     print("\n🔑 Validating Expected Secrets:")
