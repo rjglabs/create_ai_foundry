@@ -88,7 +88,8 @@ RESOURCES CREATED:
 5. Storage Account - For training data, models, and artifacts
 6. Log Analytics Workspace - For centralized logging and monitoring
 7. Application Insights - For AI model monitoring and telemetry
-8. Role Assignments - Proper RBAC for AI development
+8. Cognitive Search - For AI-powered search and indexing capabilities
+9. Role Assignments - Proper RBAC for AI development
 
 PREREQUISITES:
 - Azure CLI installed and authenticated (az login)
@@ -114,6 +115,7 @@ ENVIRONMENT VARIABLES REQUIRED:
     STORAGE_ACCOUNT_NAME    - Storage account name (globally unique)
     LOG_WORKSPACE_NAME      - Log Analytics workspace name
     APPLICATION_INSIGHTS_NAME - Application Insights component name
+    COGNITIVE_SEARCH_NAME   - Cognitive Search service name
 
 SECURITY FEATURES:
 - Uses DefaultAzureCredential for secure authentication
@@ -212,6 +214,12 @@ from azure.mgmt.keyvault.models import (
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 from azure.mgmt.loganalytics.models import Workspace, WorkspaceSku
 from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.search import SearchManagementClient
+from azure.mgmt.search.models import (
+    SearchService,
+)
+from azure.mgmt.search.models import Sku as SearchSku
+from azure.mgmt.search.models import SkuName as SearchSkuName
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.storage.models import Kind
 from azure.mgmt.storage.models import Sku as StorageSku
@@ -262,6 +270,7 @@ ai_foundry_env_vars = [
     "STORAGE_ACCOUNT_NAME",
     "APPLICATION_INSIGHTS_NAME",
     "LOG_WORKSPACE_NAME",
+    "COGNITIVE_SEARCH_NAME",
 ]
 
 
@@ -470,6 +479,7 @@ def register_azure_providers(az_command: str | None = None) -> None:
         "Microsoft.Storage",
         "Microsoft.Insights",
         "Microsoft.Authorization",
+        "Microsoft.Search",
     ]
 
     logger.info("[⚡] Registering Azure resource providers...")
@@ -582,6 +592,19 @@ def keyvault_exists(
         return False
 
 
+def search_service_exists(
+    search_client: SearchManagementClient,
+    rg_name: str,
+    search_name: str,
+) -> bool:
+    """Check if a Cognitive Search service exists."""
+    try:
+        search_client.services.get(rg_name, search_name)
+        return True
+    except Exception:
+        return False
+
+
 def get_log_analytics_workspace_id(
     log_analytics_client: LogAnalyticsManagementClient,
     rg_name: str,
@@ -610,9 +633,14 @@ def get_ai_services_endpoint_and_key(
             rg_name, ai_services_name
         )
 
-        if not account.properties or not account.properties.endpoint:
+        if not account.properties:
+            raise ValueError("AI Services account properties not found")
+
+        if not account.properties.endpoint:
             raise ValueError("AI Services account endpoint not found")
 
+        # Type narrowing for mypy - we know these are not None after
+        # the checks above
         endpoint = account.properties.endpoint
 
         # Get the primary key
@@ -623,11 +651,45 @@ def get_ai_services_endpoint_and_key(
         if not keys.key1:
             raise ValueError("AI Services primary key not found")
 
+        # Direct assignment after null check
         primary_key = keys.key1
 
         return endpoint, primary_key
     except Exception as e:
         logger.error(f"Failed to get AI Services endpoint and key: {e}")
+        raise
+
+
+def get_search_service_endpoint_and_key(
+    search_client: SearchManagementClient,
+    rg_name: str,
+    search_name: str,
+) -> tuple[str, str]:
+    """Get Cognitive Search service endpoint and primary key."""
+    try:
+        # Get the search service
+        service = search_client.services.get(rg_name, search_name)
+
+        if not service.name:
+            raise ValueError("Search service name not found")
+
+        # Type narrowing for mypy - we know this is not None after
+        # the check above
+        # Construct the endpoint URL
+        endpoint = f"https://{service.name}.search.windows.net/"
+
+        # Get the primary admin key
+        keys = search_client.admin_keys.get(rg_name, search_name)
+
+        if not keys.primary_key:
+            raise ValueError("Search service primary key not found")
+
+        # Direct assignment after null check
+        primary_key = keys.primary_key
+
+        return endpoint, primary_key
+    except Exception as e:
+        logger.error(f"Failed to get Search service endpoint and key: {e}")
         raise
 
 
@@ -733,6 +795,7 @@ def main() -> None:
         STORAGE_ACCOUNT_NAME: Storage account name (globally unique)
         LOG_WORKSPACE_NAME: Log Analytics workspace name
         APPLICATION_INSIGHTS_NAME: Application Insights component name
+        COGNITIVE_SEARCH_NAME: Cognitive Search service name
 
     Files Created:
         - ai_foundry_deployment.log: Detailed deployment logs
@@ -775,6 +838,7 @@ resource details
         storage_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         log_workspace_name = os.getenv("LOG_WORKSPACE_NAME")
         application_insights_name = os.getenv("APPLICATION_INSIGHTS_NAME")
+        cognitive_search_name = os.getenv("COGNITIVE_SEARCH_NAME")
 
         # Type assertions for mypy - ensure variables are not None
         if not all(
@@ -787,6 +851,7 @@ resource details
                 storage_account_name,
                 log_workspace_name,
                 application_insights_name,
+                cognitive_search_name,
             ]
         ):
             logger.error("Required environment variables are missing")
@@ -801,6 +866,7 @@ resource details
         assert storage_account_name is not None
         assert log_workspace_name is not None
         assert application_insights_name is not None
+        assert cognitive_search_name is not None
 
         # Set up resource tags
         tags = {
@@ -830,10 +896,13 @@ resource details
             logger.info(
                 f"  • Application Insights: {application_insights_name}"
             )
+            logger.info(f"  • Cognitive Search: {cognitive_search_name}")
             logger.info("")
             logger.info("🔐 Secrets & Configuration Management:")
             logger.info("  • AI Services API Key → Key Vault")
             logger.info("  • AI Services Endpoint → Key Vault")
+            logger.info("  • Cognitive Search API Key → Key Vault")
+            logger.info("  • Cognitive Search Endpoint → Key Vault")
             logger.info(
                 "  • (App Configuration skipped - Free SKU limitations)"
             )
@@ -899,10 +968,9 @@ resource details
         keyvault_client: KeyVaultManagementClient = KeyVaultManagementClient(
             credential, subscription_id
         )
-        # appconfig_client = AppConfigurationManagementClient(
-        #     credential, subscription_id
-        # )
-        # Note: App Configuration skipped due to Free SKU limitations
+        search_client: SearchManagementClient = SearchManagementClient(
+            credential, subscription_id
+        )
 
         # Verify/Create resource group (idempotent)
         logger.info("[📁] Verifying/Creating resource group...")
@@ -1022,11 +1090,14 @@ resource details
                 ),
             )
 
-            operation = cognitiveservices_client.accounts.begin_create(
-                resource_group, ai_services_name, ai_services_params
+            ai_services_operation = (
+                cognitiveservices_client.accounts.begin_create(
+                    resource_group, ai_services_name, ai_services_params
+                )
             )
             wait_for_operation(
-                operation, f"AI Services account '{ai_services_name}'"
+                ai_services_operation,
+                f"AI Services account '{ai_services_name}'",
             )
             logger.info(
                 f"  [✓] AI Services account '{ai_services_name}' created"
@@ -1058,11 +1129,12 @@ resource details
                 public_network_access="Enabled",
             )
 
-            operation = acr_client.registries.begin_create(
+            acr_operation = acr_client.registries.begin_create(
                 resource_group, container_registry_name, acr_params
             )
             wait_for_operation(
-                operation, f"Container Registry '{container_registry_name}'"
+                acr_operation,
+                f"Container Registry '{container_registry_name}'",
             )
             logger.info(
                 f"  [✓] Container Registry '{container_registry_name}' "
@@ -1193,9 +1265,50 @@ resource details
             )
 
         # =================================================================
-        # PHASE 8: SECRETS AND CONFIGURATION MANAGEMENT
+        # PHASE 8: COGNITIVE SEARCH
         # =================================================================
-        logger.info("[�] Phase 8: Storing secrets and configuration...")
+        logger.info("[🔍] Phase 8: Creating Cognitive Search service...")
+
+        if not search_service_exists(
+            search_client, resource_group, cognitive_search_name
+        ):
+            logger.info(
+                f"  [🔨] Creating Cognitive Search service: "
+                f"{cognitive_search_name}"
+            )
+
+            search_params = SearchService(
+                location=location,
+                tags=tags,
+                sku=SearchSku(name=SearchSkuName.free.value),
+                replica_count=1,
+                partition_count=1,
+                hosting_mode="default",
+                public_network_access="enabled",
+                disable_local_auth=False,
+            )
+
+            search_operation = search_client.services.begin_create_or_update(
+                resource_group, cognitive_search_name, search_params
+            )
+            wait_for_operation(
+                search_operation,
+                f"Cognitive Search service '{cognitive_search_name}'",
+            )
+            logger.info(
+                f"  [✓] Cognitive Search service '{cognitive_search_name}' "
+                f"created"
+            )
+        else:
+            logger.info(
+                f"  [✓] Cognitive Search service '{cognitive_search_name}' "
+                f"already exists"
+            )
+
+        # =================================================================
+        # PHASE 9: SECRETS AND CONFIGURATION MANAGEMENT
+        # =================================================================
+        logger.info("[�] Phase 9: Storing secrets and configuration...")
 
         # Get AI Services endpoint and key
         logger.info("  [🔑] Retrieving AI Services endpoint and key...")
@@ -1223,11 +1336,41 @@ resource details
             )
             logger.warning("  [⚠] You may need to configure these manually")
 
+        # Get Cognitive Search endpoint and key
+        logger.info("  [🔑] Retrieving Cognitive Search endpoint and key...")
+        try:
+            search_endpoint, search_key = get_search_service_endpoint_and_key(
+                search_client, resource_group, cognitive_search_name
+            )
+
+            # Store the API key in Key Vault
+            store_secret_in_keyvault(
+                keyvault_name, "cognitive-search-key", search_key, credential
+            )
+
+            # Store the endpoint in Key Vault
+            store_secret_in_keyvault(
+                keyvault_name,
+                "cognitive-search-endpoint",
+                search_endpoint,
+                credential,
+            )
+
+            logger.info(
+                "  [✓] Cognitive Search credentials stored successfully"
+            )
+
+        except Exception as e:
+            logger.warning(
+                f"  [⚠] Failed to store Cognitive Search credentials: {e}"
+            )
+            logger.warning("  [⚠] You may need to configure these manually")
+
         # =================================================================
-        # PHASE 9: ROLE ASSIGNMENTS
+        # PHASE 10: ROLE ASSIGNMENTS
         # =================================================================
         logger.info(
-            "[🔐] Phase 9: Setting up AI Developer role assignments..."
+            "[🔐] Phase 10: Setting up AI Developer role assignments..."
         )
 
         # AI Developer role GUID (Azure built-in role)
@@ -1334,6 +1477,11 @@ resource details
                     "type": "Microsoft.OperationalInsights/workspaces",
                     "purpose": "Log analytics and monitoring",
                 },
+                "cognitive_search": {
+                    "name": cognitive_search_name,
+                    "type": "Microsoft.Search/searchServices",
+                    "purpose": "AI-powered search and indexing capabilities",
+                },
             },
             "security_configuration": {
                 "rbac_assignments": "AI Developer role assigned",
@@ -1355,11 +1503,19 @@ resource details
         logger.info(f"   💾 Storage Account: {storage_account_name}")
         logger.info(f"   📊 Log Analytics Workspace: {log_workspace_name}")
         logger.info(f"   📊 Application Insights: {application_insights_name}")
+        logger.info(f"   🔍 Cognitive Search: {cognitive_search_name}")
         logger.info("")
         logger.info("🔑 SECRETS & CONFIGURATION:")
         logger.info("   • AI Services API Key → Key Vault: ai-services-key")
         logger.info(
             "   • AI Services Endpoint → Key Vault: ai-services-endpoint"
+        )
+        logger.info(
+            "   • Cognitive Search API Key → Key Vault: cognitive-search-key"
+        )
+        logger.info(
+            "   • Cognitive Search Endpoint → Key Vault: "
+            "cognitive-search-endpoint"
         )
         logger.info("")
         logger.info("📁 FILES CREATED:")

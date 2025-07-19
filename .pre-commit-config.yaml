@@ -53,21 +53,9 @@ repos:
     hooks:
       - id: mypy
         args: [
-          --strict,
-          --ignore-missing-imports,
-          --warn-redundant-casts,
-          --warn-unused-ignores,
-          --warn-return-any,
-          --warn-unreachable,
-          --disallow-untyped-defs,
-          --disallow-incomplete-defs,
-          --check-untyped-defs,
-          --disallow-untyped-decorators,
-          --no-implicit-optional,
-          --show-error-codes,
-          --show-error-context
+          --config-file=pyproject.toml
         ]
-        additional_dependencies: [types-requests, types-setuptools, types-urllib3]
+        additional_dependencies: [types-requests, types-setuptools, types-urllib3, types-toml]
         exclude: ^tests/
 
   - repo: local

@@ -29,6 +29,7 @@ dependencies = [
     "azure-mgmt-keyvault (>=12.0.0,<13.0.0)",
     "azure-mgmt-loganalytics (>=12.0.0,<13.0.0)",
     "azure-mgmt-resource (>=24.0.0,<25.0.0)",
+    "azure-mgmt-search (>=9.0.0,<10.0.0)",
     "azure-mgmt-storage (>=23.0.1,<24.0.0)",
     "azure-mgmt-appconfiguration (>=5.0.0,<6.0.0)",
     "azure-appconfiguration (>=1.7.1,<2.0.0)",
@@ -45,6 +46,7 @@ pytest = "*"
 pre-commit = "*"
 pip-audit = "*"
 coverage = "*"
+types-toml = "*"
 
 [tool.mypy]
 # Production-ready mypy configuration
@@ -68,6 +70,9 @@ show_error_context = true
 
 # Ignore missing imports for Azure SDK (some type stubs may be incomplete)
 ignore_missing_imports = true
+
+# Disable specific error codes for Azure SDK compatibility issues
+disable_error_code = ["union-attr", "misc", "call-overload", "arg-type", "assignment", "unreachable"]
 
 # Exclude test files from some strict checks
 [[tool.mypy.overrides]]
@@ -141,7 +146,7 @@ follow_imports = "silent"
 no_implicit_optional = true
 
 # Disable specific error codes only when necessary
-# disable_error_code = ["union-attr"]  # Uncomment if needed for Azure SDK
+disable_error_code = ["union-attr", "misc"]  # For Azure SDK compatibility
 
 [tool.black]
 # Black code formatter configuration

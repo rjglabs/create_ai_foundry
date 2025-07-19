@@ -21,7 +21,7 @@ def main() -> int:
 
     # Test 2: Check pyproject.toml parsing
     try:
-        import toml  # type: ignore[import-untyped]
+        import toml
 
         with open("pyproject.toml", "r", encoding="utf-8") as f:
             toml.load(f)  # Just validate parsing, don't store result

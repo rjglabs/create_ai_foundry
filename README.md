@@ -135,6 +135,14 @@ Azure AI Foundry is a standalone AI development platform that provides:
 - **Compliance Ready**: Follows Azure security best practices
 - **AI Security Testing**: PyRIT integration ready for AI model security validation
 
+### 🔍 AI-Powered Search & Knowledge Mining
+- **Cognitive Search Integration**: Azure Cognitive Search service for AI-powered search capabilities
+- **Vector Search**: Support for semantic search and vector embeddings
+- **Knowledge Mining**: Extract insights from unstructured data
+- **Search Analytics**: Built-in analytics and monitoring for search performance
+- **Multi-modal Search**: Support for text, images, and other content types
+- **AI Enrichment**: Built-in AI skills for content enrichment and analysis
+
 ### 🤖 AI Security Testing (PyRIT Integration)
 - **Prompt Injection Testing**: Validates AI models against jailbreak attempts
 - **Bias Detection**: Identifies potential bias in AI responses
@@ -156,6 +164,101 @@ Azure AI Foundry is a standalone AI development platform that provides:
 - **Code Formatting**: Black and isort with 79-character line limits
 - **Enterprise Standards**: PEP 8 compliance and comprehensive documentation
 - **AI Security Testing**: PyRIT readiness checks for AI model security validation
+
+## 🧠 AI Capabilities & Integration
+
+### Azure Cognitive Search Integration
+
+The deployed Cognitive Search service provides powerful AI-driven search and knowledge mining capabilities:
+
+#### **Search Capabilities**
+- **Full-text Search**: Advanced text search with ranking and relevance
+- **Vector Search**: Semantic search using AI embeddings
+- **Hybrid Search**: Combine keyword and semantic search for best results
+- **Faceted Search**: Dynamic filtering and navigation
+- **Autocomplete & Suggestions**: Real-time search suggestions
+
+#### **AI Enrichment**
+- **Built-in AI Skills**: Text extraction, OCR, entity recognition
+- **Custom Skills**: Integrate custom AI models and processing
+- **Knowledge Store**: Extract and store structured data from unstructured content
+- **Cognitive Skills Pipeline**: Chain multiple AI operations together
+
+#### **Integration with AI Services**
+- **Seamless Connection**: Automatically connected to your AI Services account
+- **Shared Authentication**: Uses the same Key Vault for credential management
+- **Unified Logging**: Integrated with your Log Analytics workspace
+- **Cost Optimization**: Shared AI Services account reduces costs
+
+### Usage Examples
+
+#### **Basic Search Implementation**
+```python
+from azure.search.documents import SearchClient
+from azure.core.credentials import AzureKeyCredential
+
+# Retrieve credentials from Key Vault
+search_endpoint = "https://your-search-service.search.windows.net"
+search_key = "your-search-admin-key"  # From Key Vault
+
+# Initialize search client
+search_client = SearchClient(
+    endpoint=search_endpoint,
+    index_name="your-index",
+    credential=AzureKeyCredential(search_key)
+)
+
+# Perform search
+results = search_client.search(
+    search_text="AI development",
+    top=10,
+    select=["id", "title", "content"]
+)
+```
+
+#### **Vector Search with AI Embeddings**
+```python
+from azure.search.documents.models import VectorizedQuery
+
+# Generate embeddings using AI Services
+embedding_vector = generate_embedding("search query")
+
+# Create vector query
+vector_query = VectorizedQuery(
+    vector=embedding_vector,
+    k_nearest_neighbors=5,
+    fields="content_vector"
+)
+
+# Execute vector search
+results = search_client.search(
+    search_text=None,
+    vector_queries=[vector_query]
+)
+```
+
+#### **Knowledge Mining Pipeline**
+```python
+# Index documents with AI enrichment
+indexer_client = SearchIndexerClient(
+    endpoint=search_endpoint,
+    credential=AzureKeyCredential(search_key)
+)
+
+# Create skillset for AI enrichment
+skillset = {
+    "name": "ai-enrichment-skillset",
+    "skills": [
+        {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "inputs": [{"name": "text", "source": "/document/content"}],
+            "outputs": [{"name": "entities", "targetName": "entities"}]
+        }
+    ]
+}
+
+indexer_client.create_skillset(skillset)
+```
 
 ## 🔧 Prerequisites
 
@@ -227,6 +330,7 @@ LOCATION=eastus2
 RESOURCE_GROUP=rg-ai-foundry-dev
 KEYVAULT_NAME=kv-ai-foundry-unique123
 AI_SERVICES_NAME=ai-services-unique123
+COGNITIVE_SEARCH_NAME=cog-ai-foundry-unique123
 CONTAINER_REGISTRY_NAME=cracrifoundryunique123
 STORAGE_ACCOUNT_NAME=staifonduryunique123
 LOG_WORKSPACE_NAME=log-ai-foundry-dev
@@ -238,12 +342,14 @@ APPLICATION_INSIGHTS_NAME=appi-ai-foundry-dev
 #### Naming Conventions
 - **Resource Groups**: `rg-{project}-{environment}`
 - **Key Vaults**: `kv-{project}-{unique-suffix}`
+- **Cognitive Search**: `cog-{project}-{unique-suffix}`
 - **Storage Accounts**: `st{project}{unique-suffix}` (no hyphens, max 24 chars)
 - **Container Registries**: `cr{project}{unique-suffix}` (alphanumeric only)
 
 #### Global Uniqueness Requirements
 These resources require globally unique names:
 - Key Vault names
+- Cognitive Search service names
 - Storage Account names
 - Container Registry names
 
@@ -290,14 +396,19 @@ python create-ai-foundry-project.py --env-file .env.production
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │ Key Vault   │  │AI Services  │  │Container    │             │
-│  │(Security)   │  │(AI Engine)  │  │Registry     │             │
+│  │ Key Vault   │  │AI Services  │  │Cognitive    │             │
+│  │(Security)   │  │(AI Engine)  │  │Search       │             │
 │  └─────────────┘  └─────────────┘  └─────────────┘             │
 │                                                                 │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │ Storage     │  │Log Analytics│  │Application  │             │
-│  │Account      │  │Workspace    │  │Insights     │             │
+│  │Container    │  │ Storage     │  │Log Analytics│             │
+│  │Registry     │  │Account      │  │Workspace    │             │
 │  └─────────────┘  └─────────────┘  └─────────────┘             │
+│                                                                 │
+│  ┌─────────────┐                                               │
+│  │Application  │                                               │
+│  │Insights     │                                               │
+│  └─────────────┘                                               │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -309,29 +420,35 @@ graph TB
     A[AI Services Account] --> B[Key Vault]
     C[Container Registry] --> B
     D[Storage Account] --> B
+    H[Cognitive Search] --> B
     E[Application Insights] --> F[Log Analytics Workspace]
     A --> E
     C --> E
     D --> E
+    H --> E
     G[RBAC Roles] --> A
     G --> C
     G --> D
+    G --> H
+    A --> H
+    D --> H
 ```
 
 ### Deployment Flow
 
-The script follows a systematic 10-phase deployment process:
+The script follows a systematic 11-phase deployment process:
 
 1. **Environment Validation**: Verify prerequisites and configuration
 2. **Resource Group Management**: Create or verify resource group
 3. **Key Vault Setup**: Deploy security foundation
 4. **AI Services Account**: Deploy core AI engine
-5. **Container Registry**: Set up model deployment infrastructure
-6. **Storage Account**: Configure data and artifact storage
-7. **Log Analytics Workspace**: Set up monitoring foundation
-8. **Application Insights**: Deploy AI monitoring
-9. **Secret Management**: Configure secure credential storage
-10. **RBAC Configuration**: Set up proper access control
+5. **Cognitive Search**: Set up AI-powered search and knowledge mining
+6. **Container Registry**: Set up model deployment infrastructure
+7. **Storage Account**: Configure data and artifact storage
+8. **Log Analytics Workspace**: Set up monitoring foundation
+9. **Application Insights**: Deploy AI monitoring
+10. **Secret Management**: Configure secure credential storage
+11. **RBAC Configuration**: Set up proper access control
 
 ## 📦 Resources Created
 
@@ -342,6 +459,7 @@ The script follows a systematic 10-phase deployment process:
 | **Resource Group** | N/A | Logical container for all AI resources |
 | **Key Vault** | Standard | Secure storage for secrets, keys, and certificates |
 | **AI Services Account** | S0 | Unified AI services endpoint (OpenAI, Cognitive Services) |
+| **Cognitive Search** | Free | AI-powered search and knowledge mining |
 | **Container Registry** | Basic | Custom AI model deployment and storage |
 | **Storage Account** | Standard_LRS | Training data, models, and artifacts |
 | **Log Analytics Workspace** | PerGB2018 | Centralized logging and monitoring |
@@ -360,6 +478,14 @@ The script follows a systematic 10-phase deployment process:
 - **Features**: Custom subdomain, diagnostic logging
 - **Services**: OpenAI, Cognitive Services, custom models
 - **Endpoints**: RESTful API with key-based authentication
+
+#### Cognitive Search
+- **SKU**: Free (suitable for development and testing)
+- **Features**: AI-powered search, knowledge mining, semantic search
+- **Search Units**: 1 search unit, 50 MB storage
+- **Capabilities**: Full-text search, vector search, semantic ranking
+- **Integration**: Connected to AI Services and Storage Account
+- **API Access**: REST API with admin key authentication
 
 #### Container Registry
 - **SKU**: Basic
